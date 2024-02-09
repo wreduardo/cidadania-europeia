@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  firstName   String
+  lastName    String
+  email       String        @unique
+  password    String
+  country     String
+  residence   String
+  ancestry    Ancestry[]
+  citizenship Citizenship[]
+}
+
+model Ancestry {
+  id         Int    @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  surname    String
+  results    String
+  generation Int
+  user       User   @relation(fields: [userId], references: [id])
+  userId     Int
+}
+
+model Citizenship {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  country   String
+  documents Document[]
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model Document {
+  id            Int         @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  type          String
+  expiration    DateTime
+  country       String
+  status        String
+  citizenship   Citizenship @relation(fields: [citizenshipId], references: [id])
+  citizenshipId Int
+}
